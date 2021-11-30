@@ -2,19 +2,24 @@ import os
 from step.step_class import Step
 
 class Geolog(Step):
+    def __init__(self, path, input_path, output_path):
+        super().__init__(path, input_path, output_path)
+        self.solver = "proge"
+
     def set_solver(self, solver):
         self.solver = solver
-    def run(self):
-        if self.solver is None:
-            self.solver = "proge"
 
-        out_path = "temp.pl"
-        command = f"pushd {self.path} && ./run -t {self.solver} -l french {self.input_path} > {out_path} && popd"
-        print(f"Call to geolog: {command}")
+    def ext_from_solver(self):
+        if self.solver == "proge":
+            return "pl"
+
+    def run(self):
+        out_ext = self.ext_from_solver()
+
+        command = f"pushd {self.path} && ./run -t {self.solver} -l french\
+        {self.input_path} > {self.out_path}.{out_ext} && popd"
+        print(f"Call to Geolog: {command}")
         if os.system(command) != 0:
             self.error()
-        move_command = f"mv {self.path}/{out_path} {out_path}"
-        print(f"Geolog move command: {move_command}")
-        if os.system(move_command) != 0:
-            self.error()
-        return out_path
+
+        return f"{self.out_path}.{out_ext}"

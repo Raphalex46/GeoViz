@@ -1,7 +1,8 @@
 import getopt
 import sys
 import cli
-from solver import proge, dispatch
+import os
+from solver import dispatch
 from step import geolog, solverviz
 
 def parse_cl():
@@ -17,7 +18,9 @@ def handle_cl(args):
             '--solver_path': "./Proge",
             '--geolog_path': "./Geolog",
             '--solverviz_path': "./SolverViz",
-            '--solver': "proge"
+            '--solver': "proge",
+            '--graphics': "geogebra",
+            '--output': "out"
             }
 
     # For each argument, fill the dictionnary or take corresponding action
@@ -60,25 +63,35 @@ if __name__ == '__main__':
     # Start by parsing command line arguments
     options = handle_cl(parse_cl())
 
+    # Initialize cleanup list
+    cleanup = []
+
     print(f"Creating and running language layer...")
     # Create our first layer (geolog)
     language_layer = geolog.Geolog(options['--geolog_path'],
-            options['input_file'])
+            options['input_file'], "tmp")
     language_layer.set_solver(options['--solver'])
     # Run language layer
     inter_file = language_layer.run()
+    cleanup.append(inter_file)
 
     print(f"Creating and running solver layer...")
     # Create solver layer
     solve = dispatch.instanciate_solver(options['--solver'],
-            options['--solver_path'], inter_file)
+            options['--solver_path'], inter_file, "tmp")
     # Run solver layers
     viz_file = solve.run()
+    cleanup.append(viz_file)
 
     print(f"Creating and running graphic layer...")
     # Create graphic export layer
-    graphic_layer = solverviz.SolverViz(options['--solverviz_path'], viz_file)
+    graphic_layer = solverviz.SolverViz(options['--solverviz_path'], viz_file,
+            options['--output'])
     # Specify the display backend to use
-    graphic_layer.set_display("geogebra")
+    graphic_layer.set_display(options['--graphics'])
     # Run graphic export layer
     out_file = graphic_layer.run()
+
+    for file in cleanup:
+        if os.system(f"rm {file}") != 0:
+            print("File cleanup failed !")
