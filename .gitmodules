@@ -1,0 +1,6 @@
+[submodule "Geolog"]
+	path = Geolog
+	url = git@github.com:Raphalex46/Geolog.git
+[submodule "SolverViz"]
+	path = SolverViz
+	url = git@github.com:Raphalex46/SolverViz.git
