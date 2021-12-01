@@ -7,7 +7,15 @@ from step import geolog, solverviz
 
 def parse_cl():
     """ Parse command line """
-    return getopt.getopt(sys.argv[1:], cli.shortoptions, cli.longoptions)
+    additionnal_options = []
+    # First check for a configuration file in working directory
+    if os.path.isfile("./geoviz.conf"):
+        config_file = open("./geoviz.conf")
+        additionnal_options = config_file.read().split(' ')
+        config_file.close
+
+    arg_list = additionnal_options + sys.argv[1:]
+    return getopt.getopt(arg_list, cli.shortoptions, cli.longoptions)
 
 def handle_cl(args):
     """ Execute according to options. Leaving remaining value-options (and
@@ -15,7 +23,6 @@ def handle_cl(args):
 
     # Fill dictionnary with default values
     opt_dict = {
-            '--solver_path': "./Proge",
             '--geolog_path': "./Geolog",
             '--solverviz_path': "./SolverViz",
             '--solver': "proge",
@@ -36,6 +43,10 @@ def handle_cl(args):
             opt = cli.options_corres[opt]
         # Fill the dictionnary
         opt_dict[opt] = val
+
+    if not ('--solver_path' in opt_dict.keys()):
+        if opt_dict['--solver'] == 'proge':
+            opt_dict['--solver_path'] = './Proge'
 
     # If the number of positional arguments is incorrect, print usage and exit
     if len(args[1]) != 1:
