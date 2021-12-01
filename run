@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python3 src/geoviz.py --geolog_path ../Geolog --solverviz_path ../SolverViz --solver_path ../../pascalshrek/Proge --graphics geogebra $1
