@@ -4,7 +4,7 @@
 shortoptions = "vhs:o:g:"
 longoptions = ["version", "help",
                "geolog_path=", "solverviz_path=", "solver_path=", "solver=",
-               "output=", "graphics="]
+               "output=", "graphics=", "keep_files"]
 options_info = [
         ("-h, --help", "Print this help and exit"),
         ("-v, --version", "Print version number and exit"),
@@ -13,7 +13,8 @@ options_info = [
         ("--solver_path", "Specify path to the solver"),
         ("-s, --solver", "Specify the solver to be used"),
         ("-g, --graphics", "Specify graphics backend to use"),
-        ("-o, --output", "Specify the output filename (without extension)")
+        ("-o, --output", "Specify the output filename (without extension)"),
+        ("--keep_files", "Keep all intermediate files")
 ]
 
 options_corres = {
@@ -21,4 +22,4 @@ options_corres = {
         '-o': "--output",
         '-g': "--graphics"
         }
-version = "0.1.2"
+version = "0.1.3"

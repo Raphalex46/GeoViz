@@ -1,0 +1,4 @@
+A, O, MA sont des points.
+Trouver C, B de type point tel que
+  MA est le milieu de [B C].
+  O est le centre du cercle circonscrit à A B C.

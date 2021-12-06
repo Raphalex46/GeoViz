@@ -11,10 +11,11 @@ def parse_cl():
     # First check for a configuration file in working directory
     if os.path.isfile("./geoviz.conf"):
         config_file = open("./geoviz.conf")
-        additionnal_options = config_file.read().split(' ')
+        additionnal_options = config_file.read().replace('\n', '').split(' ')
         config_file.close
 
     arg_list = additionnal_options + sys.argv[1:]
+    print(arg_list)
     return getopt.getopt(arg_list, cli.shortoptions, cli.longoptions)
 
 def handle_cl(args):
@@ -27,7 +28,8 @@ def handle_cl(args):
             '--solverviz_path': "./SolverViz",
             '--solver': "proge",
             '--graphics': "geogebra",
-            '--output': "out"
+            '--output': "out",
+            '--keep_files': False
             }
 
     # For each argument, fill the dictionnary or take corresponding action
@@ -43,6 +45,8 @@ def handle_cl(args):
             opt = cli.options_corres[opt]
         # Fill the dictionnary
         opt_dict[opt] = val
+        if opt == '--keep_files':
+            opt_dict['--keep_files'] = True
 
     if not ('--solver_path' in opt_dict.keys()):
         if opt_dict['--solver'] == 'proge':
@@ -92,6 +96,7 @@ if __name__ == '__main__':
             options['--solver_path'], inter_file, "tmp")
     # Run solver layers
     viz_file = solve.run()
+    print(viz_file)
     cleanup.append(viz_file)
 
     print(f"Creating and running graphic layer...")
@@ -103,6 +108,7 @@ if __name__ == '__main__':
     # Run graphic export layer
     out_file = graphic_layer.run()
 
-    for file in cleanup:
-        if os.system(f"rm {file}") != 0:
-            print("File cleanup failed !")
+    if not options['--keep_files']:
+        for file in cleanup:
+            if os.system(f"rm {file}") != 0:
+                print("File cleanup failed !")
