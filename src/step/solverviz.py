@@ -21,7 +21,14 @@ class SolverViz(Step):
         print(f"Call to SolverViz: {command}")
         if os.system(command) != 0:
             self.error()
-
-        return f"{self.out_path}.{out_ext}"
+        out_file = f"{self.out_path}.{out_ext}"
+        self.launch_backend(out_file)
+        return out_file
         
-
+    def launch_backend(self, file):
+        # Launch the program that corresponds to the backend we want to use
+        if self.display == "geogebra":
+            command = f"geogebra {file}"
+            print(f"Launch graphic backend, command: {command}")
+            if os.system(command) != 0:
+                self.error()
