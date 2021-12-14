@@ -4,6 +4,7 @@ import cli
 import os
 from solver import dispatch
 from step import geolog, solverviz
+import html
 
 def parse_cl():
     """ Parse command line """
@@ -98,6 +99,23 @@ if __name__ == '__main__':
     viz_file = solve.run()
     print(viz_file)
     cleanup.append(viz_file)
+
+    # We're going to add the input file as text in the figure
+    # First, read the input file
+    file = open(options['input_file'], "r")
+    file_string = "\"" + file.read() + "\""
+    file_string = file_string.replace("\n", "\\\\n")
+    escaped_string = html.escape(file_string)
+    file.close()
+
+    # Then append the text to the viz file
+    command = f"echo '<text out=\"Problem\">\n<literal value=\"{escaped_string}\"\
+ /></text>' >> {viz_file}"
+    print(f"Adding statement to figure command: {command}")
+    if os.system(command) != 0:
+        print("Failed to add the problem statement in the graphic file")
+
+
 
     print(f"Creating and running graphic layer...")
     # Create graphic export layer
